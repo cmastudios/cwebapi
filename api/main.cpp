@@ -75,8 +75,27 @@ struct LocalDatabase : public Database
     }
     std::optional<User> get_user_by_id(int id) override
     {
-        if (id == 1) return User{1, "cmastudios"};
-        return {};
+        Sqlite3StmtWrapper stmt;
+        if (sqlite3_prepare_v2(db, "SELECT id, username FROM users WHERE id = ? LIMIT 1", -1, &stmt.stmt, nullptr) != SQLITE_OK)
+        {
+            throw std::runtime_error("Prepare failure: " + std::string(sqlite3_errmsg(db)));
+        }
+        if (sqlite3_bind_int(stmt.stmt, 1, id) != SQLITE_OK)
+        {
+            throw std::runtime_error("Bind failure: " + std::string(sqlite3_errmsg(db)));
+        }
+        User user;
+        switch (sqlite3_step(stmt.stmt))
+        {
+            case SQLITE_ROW:
+                user.id = sqlite3_column_int(stmt.stmt, 0);
+                user.username = reinterpret_cast<const char*>(sqlite3_column_text(stmt.stmt, 1));
+                return user;
+            case SQLITE_DONE:
+                return std::nullopt;
+            default:
+                throw std::runtime_error("Step failure: " + std::string(sqlite3_errmsg(db)));
+        }
     }
 private:
     sqlite3 *db { nullptr };
