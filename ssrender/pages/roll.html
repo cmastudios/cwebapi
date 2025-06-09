@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roll</title>
+</head>
+<body>
+    <h1>Roll</h1>
+    {% if (!result.empty()) { %}
+        <p>Result:</p>
+        {% for (const auto& row : result) { %}
+            <p>{{ row }}</p>
+        {% } %}
+    {% } %}
+    
+    <form action="/roll" method="POST">
+        <label for="dice">Enter dice to roll (e.g., 2d6):</label>
+        <input type="text" id="dice" name="dice" required>
+        <button type="submit">Roll</button>
+    </form>
+</body>
+</html>
