@@ -13,6 +13,13 @@
             <li><a href="/admin">Admin</a></li>
         </menu>
     </header>
+    {% if (!cookies_accepted) { %}
+    <form action="/" method="post">
+        <p>Please consent to cookies for your list of cards to be remembered.</p>
+        <input type="hidden" name="cookie_consent" value="full">
+        <input type="submit" value="Allow All">
+    </form>
+    {% } %}
     <footer>
         Copyright 2025 Connor Monahan
     </footer>
